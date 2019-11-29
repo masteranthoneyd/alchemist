@@ -1,9 +1,6 @@
 package com.yangbingdong.redisoperv2.controller;
 
 import com.yangbingdong.redisoperv2.core.command.RedisoperCommand;
-import io.lettuce.core.codec.ByteArrayCodec;
-import io.lettuce.core.codec.RedisCodec;
-import io.lettuce.core.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/redisoper")
 public class PerfTestController{
-    private RedisCodec<String, byte[]> codec = RedisCodec.of(StringCodec.UTF8, ByteArrayCodec.INSTANCE);
 
     private String keyBytes = "startCoding:key";
     private byte[] valueBytes = "Hello, Redis!".getBytes();

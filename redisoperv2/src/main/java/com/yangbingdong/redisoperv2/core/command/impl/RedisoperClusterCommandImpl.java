@@ -78,8 +78,7 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
 
     @Override
     public CompletableFuture<Boolean> setExAsync(String key, long expire, byte[] value) {
-        asyncCommand.setex(key, expire, value);
-        return null;
+        return ((CompletableFuture<String>) asyncCommand.setex(key, expire, value)).thenApply(this::isOk);
     }
 
     @Override
