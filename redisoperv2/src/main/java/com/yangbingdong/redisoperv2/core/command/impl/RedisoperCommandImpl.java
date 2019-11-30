@@ -3,6 +3,7 @@ package com.yangbingdong.redisoperv2.core.command.impl;
 import com.yangbingdong.redisoperv2.LettuceResourceProvider;
 import com.yangbingdong.redisoperv2.core.command.RedisoperCommand;
 import io.lettuce.core.KeyValue;
+import io.lettuce.core.ScriptOutputType;
 import io.lettuce.core.SetArgs;
 import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -11,6 +12,8 @@ import io.lettuce.core.protocol.AsyncCommand;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+
+import static java.lang.String.valueOf;
 
 /**
  * @author ybd
@@ -107,5 +110,47 @@ public class RedisoperCommandImpl implements RedisoperCommand {
             map.forEach((k, v) -> asyncCommand.expire(k, expire));
             return isOk(s);
         });
+    }
+
+    @Override
+    public Long incrBy(String key, long increment) {
+        return command.incrby(key, increment);
+    }
+
+    @Override
+    public Long incrByUsingScript(String key, long increment, long expireSecond, String initValue) {
+        return eval(INCRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
+                valueOf(increment).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
+    }
+
+    @Override
+    public Long decrBy(String key, long decrement) {
+        return command.decrby(key, decrement);
+    }
+
+    @Override
+    public Long decrByUsingScript(String key, long decrement, long min, long expireSecond, String initValue) {
+        return eval(DECRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
+                valueOf(decrement).getBytes(), valueOf(min).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
+    }
+
+    @Override
+    public boolean cluster() {
+        return false;
+    }
+
+    @Override
+    public String scriptLoad(String script) {
+        return command.scriptLoad(script.getBytes());
+    }
+
+    @Override
+    public <T> T evalSha(String scriptSha, ScriptOutputType outputType, String[] keys, byte[]... args) {
+        return command.evalsha(scriptSha, outputType, keys, args);
+    }
+
+    @Override
+    public <T> T eval(String script, ScriptOutputType outputType, String[] keys, byte[]... args) {
+        return command.eval(script, outputType, keys, args);
     }
 }

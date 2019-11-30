@@ -7,15 +7,20 @@ package com.yangbingdong.redisoperv2.core.command;
  */
 public interface RedisoperCommand extends
         RedisoperKeyCommand,
-        RedisoperStringCommand {
+        RedisoperStringCommand,
+        RedisoperScriptingCommand {
 
     Long LONG_ONE = 1L;
 
     String OK = "OK";
 
+    String[] STRING_ARRAY_TMP = new String[0];
+
     default boolean isOk(String result){
         return OK.equals(result);
     }
 
-    String[] STRING_ARRAY_TMP = new String[0];
+    boolean cluster();
+
+
 }

@@ -26,4 +26,11 @@ interface RedisoperStringCommand {
 
     CompletableFuture<Boolean> mSetExAsync(Map<String, byte[]> map, long expire);
 
+    Long incrBy(String key, long increment);
+
+    Long incrByUsingScript(String key, long increment, long expireSecond, String initValue);
+
+    Long decrBy(String key, long decrement);
+
+    Long decrByUsingScript(String key, long decrement, long min, long expireSecond, String initValue);
 }

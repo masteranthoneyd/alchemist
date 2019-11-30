@@ -97,7 +97,15 @@ public class RedisoperStringCommandTest extends Redisoperv2ApplicationTests {
                   .isTrue();
         Assertions.assertThat(command.ttl(key2))
                   .isGreaterThan(50);
+    }
 
+    @Test
+    public void incrByAndDecrByTest() {
+        Assertions.assertThat(command.incrBy(key, 10L))
+                  .isEqualTo(10L);
+        command.del(key);
+        Assertions.assertThat(command.decrBy(key, 10L))
+                  .isEqualTo(-10L);
     }
 
     @After
