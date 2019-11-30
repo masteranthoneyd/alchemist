@@ -32,6 +32,11 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
         cluster = lettuceResourceProvider.isCluster();
     }
 
+    @Override
+    public boolean cluster() {
+        return cluster;
+    }
+
     /*########## Key ##########*/
 
     @Override
@@ -57,6 +62,11 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
     @Override
     public CompletableFuture<Boolean> expireAsync(String key, long second) {
         return (CompletableFuture<Boolean>) asyncCommand.expire(key, second);
+    }
+
+    @Override
+    public CompletableFuture<Boolean> batchExpireUsingLua(List<String> keys, long second) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -118,7 +128,7 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
     }
 
     @Override
-    public Long incrByUsingScript(String key, long increment, long expireSecond, String initValue) {
+    public Long incrByUsingLua(String key, long increment, long expireSecond, String initValue) {
         return eval(INCRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
                 valueOf(increment).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
     }
@@ -129,14 +139,9 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
     }
 
     @Override
-    public Long decrByUsingScript(String key, long decrement, long min, long expireSecond, String initValue) {
+    public Long decrByUsingLua(String key, long decrement, long min, long expireSecond, String initValue) {
         return eval(DECRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
                 valueOf(decrement).getBytes(), valueOf(min).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
-    }
-
-    @Override
-    public boolean cluster() {
-        return cluster;
     }
 
     @Override
@@ -152,5 +157,12 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
     @Override
     public <T> T eval(String script, ScriptOutputType outputType, String[] keys, byte[]... args) {
         return command.eval(script, outputType, keys, args);
+    }
+
+    /*########## Set ##########*/
+
+    @Override
+    public Long sAdd(String key, byte[]... members) {
+        return command.sadd(key, members);
     }
 }

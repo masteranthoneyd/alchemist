@@ -8,7 +8,8 @@ package com.yangbingdong.redisoperv2.core.command;
 public interface RedisoperCommand extends
         RedisoperKeyCommand,
         RedisoperStringCommand,
-        RedisoperScriptingCommand {
+        RedisoperScriptingCommand,
+        RedisoperSetCommand {
 
     Long LONG_ONE = 1L;
 

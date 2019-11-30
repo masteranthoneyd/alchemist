@@ -9,10 +9,12 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.protocol.AsyncCommand;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import static io.lettuce.core.ScriptOutputType.VALUE;
 import static java.lang.String.valueOf;
 
 /**
@@ -29,6 +31,11 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     public RedisoperCommandImpl(LettuceResourceProvider lettuceResourceProvider) {
         command = lettuceResourceProvider.getCommand();
         asyncCommand = lettuceResourceProvider.getAsyncCommand();
+    }
+
+    @Override
+    public boolean cluster() {
+        return false;
     }
 
     /*########## Key ##########*/
@@ -56,6 +63,13 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     @Override
     public CompletableFuture<Boolean> expireAsync(String key, long second) {
         return (CompletableFuture<Boolean>) asyncCommand.expire(key, second);
+    }
+
+    @Override
+    public CompletableFuture<Boolean> batchExpireUsingLua(List<String> keys, long second) {
+        return ((CompletableFuture<byte[]>) asyncCommand
+                .<byte[]>eval(BATCH_EXPIRE, VALUE, keys.toArray(STRING_ARRAY_TMP), valueOf(keys.size()).getBytes(), valueOf(second).getBytes()))
+                .thenApply(b -> isOk(new String(b)));
     }
 
     @Override
@@ -99,7 +113,7 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     @Override
     public Boolean mSetEx(Map<String, byte[]> map, long expire) {
         String result = command.mset(map);
-        map.forEach((k, v) -> asyncCommand.expire(k, expire));
+        batchExpireUsingLua(new ArrayList<>(map.keySet()), expire);
         return isOk(result);
     }
 
@@ -118,7 +132,7 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     }
 
     @Override
-    public Long incrByUsingScript(String key, long increment, long expireSecond, String initValue) {
+    public Long incrByUsingLua(String key, long increment, long expireSecond, String initValue) {
         return eval(INCRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
                 valueOf(increment).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
     }
@@ -129,15 +143,12 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     }
 
     @Override
-    public Long decrByUsingScript(String key, long decrement, long min, long expireSecond, String initValue) {
+    public Long decrByUsingLua(String key, long decrement, long min, long expireSecond, String initValue) {
         return eval(DECRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
                 valueOf(decrement).getBytes(), valueOf(min).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
     }
 
-    @Override
-    public boolean cluster() {
-        return false;
-    }
+    /*########## Scripting ##########*/
 
     @Override
     public String scriptLoad(String script) {
@@ -152,5 +163,12 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     @Override
     public <T> T eval(String script, ScriptOutputType outputType, String[] keys, byte[]... args) {
         return command.eval(script, outputType, keys, args);
+    }
+
+    /*########## Set ##########*/
+
+    @Override
+    public Long sAdd(String key, byte[]... members) {
+        return command.sadd(key, members);
     }
 }

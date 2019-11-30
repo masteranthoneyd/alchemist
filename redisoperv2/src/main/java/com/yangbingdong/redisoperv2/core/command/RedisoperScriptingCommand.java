@@ -25,6 +25,12 @@ public interface RedisoperScriptingCommand {
             "end\n" +
             "return redis.call('INCRBY',KEYS[1],ARGV[1])";
 
+    String BATCH_EXPIRE = "for i=1, ARGV[1], 1\n" +
+            "do\n" +
+            "redis.call(\"EXPIRE\", KEYS[i], ARGV[2]);\n" +
+            "end\n" +
+            "return 'OK'";
+
     String scriptLoad(String script);
 
     <T> T evalSha(String scriptSha, ScriptOutputType outputType, String[] keys, byte[]... args);

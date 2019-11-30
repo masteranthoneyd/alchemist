@@ -1,5 +1,6 @@
 package com.yangbingdong.redisoperv2.core.command;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -17,6 +18,8 @@ interface RedisoperKeyCommand {
     boolean exists(String key);
 
     CompletableFuture<Boolean> expireAsync(String key, long second);
+
+    CompletableFuture<Boolean> batchExpireUsingLua(List<String> keys, long second);
 
     CompletableFuture<Boolean> expireAtAsync(String key, long timestamp);
 

@@ -18,6 +18,7 @@ public class RedisoperScriptingCommandTest extends Redisoperv2ApplicationTests {
     private RedisoperCommand command;
 
     private String key = "REDISOPER:TEST:SCRIPTING";
+    private String key2 = "REDISOPER:TEST:SCRIPTING";
     private byte[] value = "REDISOPER:TEST:BASIC:SCRIPTING".getBytes();
 
     @Test
@@ -32,28 +33,33 @@ public class RedisoperScriptingCommandTest extends Redisoperv2ApplicationTests {
 
     @Test
     public void decrByUsingScriptTest() {
-        Long result = command.decrByUsingScript(key, 1, 0, 60, "2");
+        Long result = command.decrByUsingLua(key, 1, 0, 60, "2");
         Assertions.assertThat(result)
                   .isEqualTo(1);
-        result = command.decrByUsingScript(key, 1, 0, 60, "2");
+        result = command.decrByUsingLua(key, 1, 0, 60, "2");
         Assertions.assertThat(result)
                   .isEqualTo(0);
-        result = command.decrByUsingScript(key, 1, 0, 60, "2");
+        result = command.decrByUsingLua(key, 1, 0, 60, "2");
         Assertions.assertThat(result)
                   .isEqualTo(-1);
-        result = command.decrByUsingScript(key, 1, 0, 60, "2");
+        result = command.decrByUsingLua(key, 1, 0, 60, "2");
         Assertions.assertThat(result)
                   .isEqualTo(-1);
     }
 
     @Test
     public void incrByUsingScriptTest() {
-        Long result = command.incrByUsingScript(key, 1, 60, "0");
+        Long result = command.incrByUsingLua(key, 1, 60, "0");
         Assertions.assertThat(result)
                   .isEqualTo(1);
-        result = command.incrByUsingScript(key, 1, 60, "0");
+        result = command.incrByUsingLua(key, 1, 60, "0");
         Assertions.assertThat(result)
                   .isEqualTo(2);
+    }
+
+    @Test
+    public void batchExpireTest() {
+        // command
     }
 
     @After
