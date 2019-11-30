@@ -8,6 +8,8 @@ import io.lettuce.core.SetArgs;
 import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands;
 import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -24,17 +26,17 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
 
     private final RedisAdvancedClusterCommands<String, byte[]> command;
     private final RedisAdvancedClusterAsyncCommands<String, byte[]> asyncCommand;
-    private final boolean cluster;
+    private Charset charset = StandardCharsets.UTF_8;
+
 
     public RedisoperClusterCommandImpl(LettuceResourceProvider lettuceResourceProvider) {
         command = lettuceResourceProvider.getClusterCommand();
         asyncCommand = lettuceResourceProvider.getClusterAsyncCommand();
-        cluster = lettuceResourceProvider.isCluster();
     }
 
     @Override
     public boolean cluster() {
-        return cluster;
+        return true;
     }
 
     /*########## Key ##########*/
@@ -130,7 +132,7 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
     @Override
     public Long incrByUsingLua(String key, long increment, long expireSecond, String initValue) {
         return eval(INCRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
-                valueOf(increment).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
+                valueOf(increment).getBytes(charset), valueOf(expireSecond).getBytes(charset), valueOf(initValue).getBytes(charset));
     }
 
     @Override
@@ -140,13 +142,18 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
 
     @Override
     public Long decrByUsingLua(String key, long decrement, long min, long expireSecond, String initValue) {
-        return eval(DECRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
-                valueOf(decrement).getBytes(), valueOf(min).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
+        return eval(DECRBY_SCRIPT,
+                ScriptOutputType.INTEGER,
+                new String[]{key},
+                valueOf(decrement).getBytes(charset),
+                valueOf(min).getBytes(charset),
+                valueOf(expireSecond).getBytes(charset),
+                valueOf(initValue).getBytes(charset));
     }
 
     @Override
     public String scriptLoad(String script) {
-        return command.scriptLoad(script.getBytes());
+        return command.scriptLoad(script.getBytes(charset));
     }
 
     @Override

@@ -9,6 +9,8 @@ import io.lettuce.core.api.async.RedisAsyncCommands;
 import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.protocol.AsyncCommand;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class RedisoperCommandImpl implements RedisoperCommand {
 
     private final RedisCommands<String, byte[]> command;
     private final RedisAsyncCommands<String, byte[]> asyncCommand;
+    private Charset charset = StandardCharsets.UTF_8;
 
     public RedisoperCommandImpl(LettuceResourceProvider lettuceResourceProvider) {
         command = lettuceResourceProvider.getCommand();
@@ -68,7 +71,7 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     @Override
     public CompletableFuture<Boolean> batchExpireUsingLua(List<String> keys, long second) {
         return ((CompletableFuture<byte[]>) asyncCommand
-                .<byte[]>eval(BATCH_EXPIRE, VALUE, keys.toArray(STRING_ARRAY_TMP), valueOf(keys.size()).getBytes(), valueOf(second).getBytes()))
+                .<byte[]>eval(BATCH_EXPIRE, VALUE, keys.toArray(STRING_ARRAY_TMP), valueOf(keys.size()).getBytes(charset), valueOf(second).getBytes(charset)))
                 .thenApply(b -> isOk(new String(b)));
     }
 
@@ -134,7 +137,7 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     @Override
     public Long incrByUsingLua(String key, long increment, long expireSecond, String initValue) {
         return eval(INCRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
-                valueOf(increment).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
+                valueOf(increment).getBytes(charset), valueOf(expireSecond).getBytes(charset), valueOf(initValue).getBytes(charset));
     }
 
     @Override
@@ -145,14 +148,14 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     @Override
     public Long decrByUsingLua(String key, long decrement, long min, long expireSecond, String initValue) {
         return eval(DECRBY_SCRIPT, ScriptOutputType.INTEGER, new String[]{key},
-                valueOf(decrement).getBytes(), valueOf(min).getBytes(), valueOf(expireSecond).getBytes(), valueOf(initValue).getBytes());
+                valueOf(decrement).getBytes(charset), valueOf(min).getBytes(charset), valueOf(expireSecond).getBytes(charset), valueOf(initValue).getBytes(charset));
     }
 
     /*########## Scripting ##########*/
 
     @Override
     public String scriptLoad(String script) {
-        return command.scriptLoad(script.getBytes());
+        return command.scriptLoad(script.getBytes(charset));
     }
 
     @Override

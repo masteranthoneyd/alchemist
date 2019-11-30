@@ -51,6 +51,25 @@
             <artifactId>commons-pool2</artifactId>
         </dependency>
 
+        <!-- Serialize Util Dependence Begin -->
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-core</artifactId>
+            <version>1.1.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dyuproject.protostuff</groupId>
+            <artifactId>protostuff-runtime</artifactId>
+            <version>1.1.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>3.1</version>
+        </dependency>
+
 
         <dependency>
             <artifactId>spring-boot-starter-web</artifactId>
