@@ -28,6 +28,9 @@ public class ProtostuffSerializer implements Serializer {
 
 	@Override
 	public <T> T deserialize(byte[] data, Class<T> cls) {
+        if (data == null) {
+            return null;
+        }
 		T message = objenesis.newInstance(cls);
 		ProtostuffIOUtil.mergeFrom(data, message, RuntimeSchema.getSchema(cls));
 		return message;
