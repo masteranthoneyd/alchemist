@@ -11,6 +11,8 @@ import java.util.concurrent.CompletableFuture;
 interface RedisoperKeyCommand {
     Long del(String... keys);
 
+    void delByScan(String pattern);
+
     CompletableFuture<Long> delAsync(String... keys);
 
     CompletableFuture<Long> unlinkAsync(String... keys);

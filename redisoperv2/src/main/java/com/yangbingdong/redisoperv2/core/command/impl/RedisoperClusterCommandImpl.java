@@ -47,6 +47,11 @@ public class RedisoperClusterCommandImpl implements RedisoperCommand {
     }
 
     @Override
+    public void delByScan(String pattern) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public CompletableFuture<Long> delAsync(String... keys) {
         return (CompletableFuture<Long>) asyncCommand.del(keys);
     }

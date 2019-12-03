@@ -2,7 +2,10 @@ package com.yangbingdong.redisoperv2.core.command.impl;
 
 import com.yangbingdong.redisoperv2.LettuceResourceProvider;
 import com.yangbingdong.redisoperv2.core.command.RedisoperCommand;
+import io.lettuce.core.KeyScanCursor;
 import io.lettuce.core.KeyValue;
+import io.lettuce.core.ScanArgs;
+import io.lettuce.core.ScanCursor;
 import io.lettuce.core.ScriptOutputType;
 import io.lettuce.core.SetArgs;
 import io.lettuce.core.api.async.RedisAsyncCommands;
@@ -16,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+import static io.lettuce.core.ScanArgs.Builder.limit;
+import static io.lettuce.core.ScanCursor.FINISHED;
+import static io.lettuce.core.ScanCursor.INITIAL;
 import static io.lettuce.core.ScriptOutputType.VALUE;
 import static java.lang.String.valueOf;
 
@@ -46,6 +52,21 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     @Override
     public Long del(String... keys) {
         return command.del(keys);
+    }
+
+    @Override
+    public void delByScan(String pattern) {
+        ScanArgs scanArgs = limit(BATCH_SIZE).match(pattern);
+        ScanCursor cursor = INITIAL;
+        do {
+            KeyScanCursor<String> result = command.scan(cursor, scanArgs);
+            cursor = ScanCursor.of(result.getCursor());
+            cursor.setFinished(result.isFinished());
+            List<String> values = result.getKeys();
+            if (!values.isEmpty()) {
+                command.del(values.toArray(STRING_ARRAY_TMP));
+            }
+        } while (!(FINISHED.getCursor().equals(cursor.getCursor()) && FINISHED.isFinished() == cursor.isFinished()));
     }
 
     @Override
@@ -112,7 +133,6 @@ public class RedisoperCommandImpl implements RedisoperCommand {
         return command.mget(keys.toArray(STRING_ARRAY_TMP));
     }
 
-    // TODO 单节点Redis可使用lua脚本批量设置过期时间
     @Override
     public Boolean mSetEx(Map<String, byte[]> map, long expire) {
         String result = command.mset(map);
@@ -124,7 +144,7 @@ public class RedisoperCommandImpl implements RedisoperCommand {
     public CompletableFuture<Boolean> mSetExAsync(Map<String, byte[]> map, long expire) {
         AsyncCommand<String, byte[], String> mset = (AsyncCommand<String, byte[], String>) asyncCommand.mset(map);
         return mset.thenApply(s -> {
-            map.forEach((k, v) -> asyncCommand.expire(k, expire));
+            batchExpireUsingLua(new ArrayList<>(map.keySet()), expire);
             return isOk(s);
         });
     }

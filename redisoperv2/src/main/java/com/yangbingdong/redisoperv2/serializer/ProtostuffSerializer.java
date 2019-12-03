@@ -14,10 +14,11 @@ import org.objenesis.ObjenesisStd;
 public class ProtostuffSerializer implements Serializer {
 	private static Objenesis objenesis = new ObjenesisStd(true);
 
+    // TODO 使用 ThreadLocal 分配 LinkedBuffer
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> byte[] serialize(T obj) {
-		LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
+        LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
 		try {
 			Class<T> cls = (Class<T>) obj.getClass();
 			return ProtostuffIOUtil.toByteArray(obj, RuntimeSchema.getSchema(cls), buffer);

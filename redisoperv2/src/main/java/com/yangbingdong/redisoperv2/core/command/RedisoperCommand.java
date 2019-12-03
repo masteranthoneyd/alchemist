@@ -17,6 +17,8 @@ public interface RedisoperCommand extends
 
     String[] STRING_ARRAY_TMP = new String[0];
 
+    int BATCH_SIZE = 250;
+
     default boolean isOk(String result){
         return OK.equals(result);
     }
