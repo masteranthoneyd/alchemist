@@ -6,7 +6,6 @@
         <groupId>com.yangbingdong</groupId>
         <artifactId>alchemist</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>redisoperv2</artifactId>
     <version>0.0.1-SNAPSHOT</version>

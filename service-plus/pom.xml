@@ -6,12 +6,12 @@
         <groupId>com.yangbingdong</groupId>
         <artifactId>alchemist</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath/>
     </parent>
-
-    <artifactId>service</artifactId>
+    <artifactId>service-plus</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>service</name>
-    <description>Alchemist Common Service with MyBatis-Plus</description>
+    <name>service-plus</name>
+    <description>Universal Service By Mybatis Plus</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -28,6 +28,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -54,22 +60,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-            <version>${mybatisplus.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>2.3.29</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>p6spy</groupId>
             <artifactId>p6spy</artifactId>
-            <version>3.8.5</version>
+            <version>3.8.6</version>
         </dependency>
 
         <dependency>
@@ -79,7 +72,7 @@
 
         <dependency>
             <groupId>com.yangbingdong</groupId>
-            <artifactId>redisoper</artifactId>
+            <artifactId>redisoperv2</artifactId>
         </dependency>
     </dependencies>
 
@@ -91,20 +84,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-        </pluginRepository>
-    </pluginRepositories>
 
 </project>

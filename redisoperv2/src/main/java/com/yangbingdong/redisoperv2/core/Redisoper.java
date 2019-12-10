@@ -45,23 +45,18 @@ public class Redisoper<T> {
         this.noIndexMsg = entityMetadata.getEntityName() + " do not contain index";
     }
 
-    public T getByKey(Supplier<T> dbLoader, Object... value) {
-        String primaryKey = entityMetadata.genRedisPrimaryKey(value);
-        T entity = serializer.deserialize(command.get(primaryKey), entityClass);
-        if (entity == null) {
-            entity = dbLoader.get();
-            if (entity != null) {
-                set2Redis(entity, primaryKey);
-            }
-        }
-        return entity;
+    public T getByKey(Supplier<T> dbLoader, Object... values) {
+        return getByKey(dbLoader, true, values);
     }
 
-    public T getByIdAndNotSetToRedis(Supplier<T> dbLoader, Object... value) {
-        String primaryKey = entityMetadata.genRedisPrimaryKey(value);
+    public T getByKey(Supplier<T> dbLoader, boolean cache, Object... values) {
+        String primaryKey = entityMetadata.genRedisPrimaryKey(values);
         T entity = serializer.deserialize(command.get(primaryKey), entityClass);
         if (entity == null) {
             entity = dbLoader.get();
+            if (cache && entity != null) {
+                set2Redis(entity, primaryKey);
+            }
         }
         return entity;
     }
