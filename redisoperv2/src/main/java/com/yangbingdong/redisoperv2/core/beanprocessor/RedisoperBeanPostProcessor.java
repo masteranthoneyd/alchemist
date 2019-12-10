@@ -1,7 +1,7 @@
 package com.yangbingdong.redisoperv2.core.beanprocessor;
 
 
-import com.yangbingdong.redisoperv2.core.RedisoperAware;
+import com.yangbingdong.redisoperv2.core.RedisoperAwareV2;
 
 import static com.youngbingdong.util.reflect.TypeUtil.getClassFromGenericTypeInterface;
 
@@ -14,7 +14,7 @@ public class RedisoperBeanPostProcessor extends AbstractBeanPostProcessor {
 
 	@Override
 	Class resolveEntityClass(Object bean) {
-		return getClassFromGenericTypeInterface(bean.getClass(), RedisoperAware.class);
+		return getClassFromGenericTypeInterface(bean.getClass(), RedisoperAwareV2.class);
 	}
 
 }

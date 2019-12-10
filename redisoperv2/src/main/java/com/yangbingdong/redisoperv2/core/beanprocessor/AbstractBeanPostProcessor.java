@@ -2,7 +2,7 @@ package com.yangbingdong.redisoperv2.core.beanprocessor;
 
 import cn.hutool.core.util.StrUtil;
 import com.yangbingdong.redisoperv2.core.Redisoper;
-import com.yangbingdong.redisoperv2.core.RedisoperAware;
+import com.yangbingdong.redisoperv2.core.RedisoperAwareV2;
 import com.yangbingdong.redisoperv2.core.metadata.EntityMetadata;
 import com.yangbingdong.redisoperv2.core.metadata.annotation.RedisIndex;
 import com.yangbingdong.redisoperv2.core.metadata.annotation.RedisPrimaryKey;
@@ -37,10 +37,10 @@ public abstract class AbstractBeanPostProcessor implements BeanPostProcessor, Ap
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		if(bean instanceof RedisoperAware){
+		if(bean instanceof RedisoperAwareV2){
 			Class entityClass = resolveEntityClass(bean);
 			Assert.notNull(entityClass, "解析错误");
-			injectRedisoper((RedisoperAware) bean, entityClass);
+			injectRedisoper((RedisoperAwareV2) bean, entityClass);
 		}
 		return bean;
 	}
@@ -48,7 +48,7 @@ public abstract class AbstractBeanPostProcessor implements BeanPostProcessor, Ap
 	abstract Class resolveEntityClass(Object bean);
 
 	@SuppressWarnings({"unchecked"})
-	private void injectRedisoper(RedisoperAware bean, Class entityClass) {
+	private void injectRedisoper(RedisoperAwareV2 bean, Class entityClass) {
 		List<EntityIndexEntry> primaryKeyList = new ArrayList<>(16);
 		Map<String, List<EntityIndexEntry>> indexMap = new HashMap<>(16);
 

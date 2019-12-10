@@ -14,7 +14,6 @@ import org.objenesis.ObjenesisStd;
 public class ProtostuffSerializer implements Serializer {
 	private static Objenesis objenesis = new ObjenesisStd(true);
 
-    // TODO 使用 ThreadLocal 分配 LinkedBuffer
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> byte[] serialize(T obj) {

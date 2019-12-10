@@ -1,7 +1,7 @@
 package com.yangbingdong.redisoperv2.core.redisoper;
 
 import com.yangbingdong.redisoperv2.core.Redisoper;
-import com.yangbingdong.redisoperv2.core.RedisoperAware;
+import com.yangbingdong.redisoperv2.core.RedisoperAwareV2;
 import com.yangbingdong.redisoperv2.core.redisoper.entity.TestUser;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.List;
  * @contact yangbingdong1994@gmail.com
  */
 @Service
-public class UserService implements RedisoperAware<TestUser> {
+public class UserService implements RedisoperAwareV2<TestUser> {
 
     public static final String EMAIL = "EMAIL";
     public static final String NAME = "NAME";

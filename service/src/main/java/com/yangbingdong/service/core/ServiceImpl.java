@@ -12,10 +12,10 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,13 +30,13 @@ import java.util.stream.Collectors;
  * @date 2019/9/3
  * @contact yangbingdong1994@gmail.com
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"SpringJavaInjectionPointsAutowiringInspection"})
 @Slf4j
 public class ServiceImpl<M extends CustomBaseMapper<T>, T> implements Service<T>, RedisoperAware<T> {
 
     protected Log logger = LogFactory.getLog(getClass());
 
-    @Resource
+    @Autowired
     protected M baseMapper;
 
     private Class<T> entityClass;
@@ -280,7 +280,8 @@ public class ServiceImpl<M extends CustomBaseMapper<T>, T> implements Service<T>
 
     @Override
     public IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper) {
-        return baseMapper.selectMapsPage(page, queryWrapper);
+        // return baseMapper.selectMapsPage(page, queryWrapper);
+        return null;
     }
 
     @Override

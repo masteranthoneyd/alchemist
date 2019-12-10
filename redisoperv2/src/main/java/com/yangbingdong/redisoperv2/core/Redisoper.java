@@ -57,6 +57,15 @@ public class Redisoper<T> {
         return entity;
     }
 
+    public T getByIdAndNotSetToRedis(Supplier<T> dbLoader, Object... value) {
+        String primaryKey = entityMetadata.genRedisPrimaryKey(value);
+        T entity = serializer.deserialize(command.get(primaryKey), entityClass);
+        if (entity == null) {
+            entity = dbLoader.get();
+        }
+        return entity;
+    }
+
     public T getByUniqueIndex(Supplier<T> dbLoader, String uniqueIndex, Object... values) {
         checkContainIndex();
         String redisUniqueIndexKey = entityMetadata.genRedisUniqueIndexKey(uniqueIndex, values);
@@ -116,7 +125,11 @@ public class Redisoper<T> {
     }
 
     public void del(T entity) {
+        if (entity == null) {
+            return;
+        }
         command.delAsync(entityMetadata.genRedisPrimaryKeyByEntity(entity));
+        delIndex(entity);
     }
 
     public void delIndex(T entity) {
@@ -132,5 +145,4 @@ public class Redisoper<T> {
     private void set2Redis(T entity, String primaryKey) {
         command.setExAsync(primaryKey, EXPIRE, serializer.serialize(entity));
     }
-
 }
