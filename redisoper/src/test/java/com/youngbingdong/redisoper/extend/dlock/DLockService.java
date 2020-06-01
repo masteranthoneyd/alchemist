@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DLockService {
 
-	@Lock(key = "'BuziKey:' + #args[0]")
+	@Lock(expression = "'BuziKey:' + #args[0]")
 	public String lockTest(Long id) {
 		return id.toString();
 	}

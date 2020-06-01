@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface Lock {
 
-	String key();
+	String expression();
 
 	long waitSecond() default 2L;
 
